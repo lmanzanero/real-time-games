@@ -9,7 +9,24 @@
 
 body {
   margin: 0;
-  	background: linear-gradient(#2A5470, #4C4177);
+  background: linear-gradient(#2A5470, #4C4177);
+}
+
+.container {
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+
+.container .btn {
+  width: 200px;
+  height: 40px;
+  color: linear-gradient(#2A5470, #4C4177);
+  background-color: grey;
+}
+
+.container p {
+  font-size: 20px;
 }
 
 .board {

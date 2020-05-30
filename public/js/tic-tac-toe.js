@@ -15,11 +15,46 @@ const board = document.getElementById('board')
 const winningMessageElement = document.getElementById('winningMessage')
 const restartButton = document.getElementById('restartButton')
 const winningMessageTextElement = document.querySelector('[data-winning-message-text]')
-let circleTurn
+const generateRoomBtn = document.querySelector('.btn');
+const userName = document.querySelector('#user-name');
+const roomId = document.querySelector('#room-name');
+const userList = document.getElementById('users');
+const enterGame = document.querySelector("#enter-game");
+let circleTurn; 
 
 startGame()
+ 
 
 restartButton.addEventListener('click', startGame)
+generateRoomBtn.addEventListener('click', () => {
+  roomId.value = `${new Date().getMilliseconds()}`;
+});
+
+roomId.addEventListener('click', () => {
+    roomId.select();
+    document.execCommand('copy');    
+});
+
+enterGame.addEventListener('click', () => { 
+  const socket = io();
+  console.log(socket); 
+  socket.emit('joinGame', { username: userName.value, room: roomId.value}); 
+  // Get room and users
+ socket.on('roomUsers', ({ room, users }) => {
+  console.log(roomId, users);
+  outputUsers(users);
+ });
+  socket.on('message', game => {
+    console.log(`${game} created`);
+  });
+});
+
+// Add users to DOM
+function outputUsers(users) {
+  userList.innerHTML = `
+    ${users.map(user => `<li>${user.username}</li>`).join('')}
+  `;
+}
 
 function startGame() {
   circleTurn = false
