@@ -2,6 +2,24 @@ const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
 const userList = document.getElementById('users');
+const msg = document.getElementById('msg');
+
+window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+ 
+const recognition = new SpeechRecognition();
+recognition.interimResults = true; 
+
+recognition.addEventListener('result', (e) => {
+  const transcript = Array.from(e.results)
+  .map(result => result[0])
+  .map(result => result.transcript)
+  .join(''); 
+  msg.value = transcript; 
+});
+
+recognition.start();
+
 
 // Get username and room from URL
 const { username, room } = Qs.parse(location.search, {
@@ -9,6 +27,7 @@ const { username, room } = Qs.parse(location.search, {
 });
 
 const socket = io();
+
 
 // Join chatroom
 socket.emit('joinRoom', { username, room });
