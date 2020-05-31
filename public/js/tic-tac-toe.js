@@ -24,6 +24,16 @@ let circleTurn;
 const socket = io();
  console.log(socket); 
 
+ socket.on('cell', currentClass => {   
+  console.log(currentClass); 
+});
+
+socket.on('winner', winner => {
+  console.log(winner);
+  winningMessageTextElement.innerHTML = winner;
+  winningMessageElement.classList.add('show');
+});
+
 startGame()
  
 
@@ -39,6 +49,7 @@ roomId.addEventListener('click', () => {
 
 enterGame.addEventListener('click', () => { 
   socket.emit('joinGame', { userName: userName.value, roomId: roomId.value}); 
+  
   // Get room and users
 //  socket.on('roomUsers', ({ room, users }) => {
 //   console.log(room, users, "from tic tac toe.js");
@@ -47,7 +58,9 @@ enterGame.addEventListener('click', () => {
   // socket.on('message', game => {
   //   console.log(`${game} created`);
   // });
+ 
 });
+ 
 
 // Add users to DOM
 function outputUsers(users) {
@@ -68,9 +81,11 @@ function startGame() {
   winningMessageElement.classList.remove('show')
 }
 
-function handleClick(e) {
-  const cell = e.target
-  const currentClass = circleTurn ? CIRCLE_CLASS : X_CLASS
+function handleClick(e) {  
+  const cell = e.target 
+  const currentClass = circleTurn ? CIRCLE_CLASS : X_CLASS 
+   // Emit message to server
+   socket.emit('userPick', currentClass);
   placeMark(cell, currentClass)
   if (checkWin(currentClass)) {
     endGame(false)
@@ -84,11 +99,13 @@ function handleClick(e) {
 
 function endGame(draw) {
   if (draw) {
-    winningMessageTextElement.innerText = 'Draw!'
+    winningMessageTextElement.innerText = 'Draw!';
+    socket.emit('endGame', winningMessageTextElement.innerText);
   } else {
-    winningMessageTextElement.innerText = `${circleTurn ? "O's" : "X's"} Wins!`
+    winningMessageTextElement.innerText = `${circleTurn ? "O's" : "X's"} Wins!`;
+    socket.emit('endGame', winningMessageTextElement.innerText); 
   }
-  winningMessageElement.classList.add('show')
+  winningMessageElement.classList.add('show');
 }
 
 function isDraw() {
@@ -97,7 +114,7 @@ function isDraw() {
   })
 }
 
-function placeMark(cell, currentClass) {
+function placeMark(cell, currentClass) { 
   cell.classList.add(currentClass)
 }
 

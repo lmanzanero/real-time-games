@@ -16,6 +16,7 @@ recognition.addEventListener('result', (e) => {
   .map(result => result.transcript)
   .join(''); 
   msg.value = transcript; 
+  console.log(transcript);
 });
 
 recognition.start();

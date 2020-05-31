@@ -8,6 +8,10 @@ function ticTacToeUserJoin(id, userName, roomId) {
   return user
 }
 
+function getUsersAmt(){
+  return ticTacToeUsers.length;
+}
+
 // Join user to chat
 function userJoin(id, username, room) {
   const user = { id, username, room };
@@ -19,6 +23,11 @@ function userJoin(id, username, room) {
 // Get current user
 function getCurrentUser(id) {
   return users.find(user => user.id === id);
+}
+
+//get Current Tic Tac Toe User
+function getCurrentTicTacToeUser(id){
+  return ticTacToeUsers.find(user => user.id === id);
 }
 
 // User leaves chat
@@ -38,7 +47,9 @@ function getRoomUsers(room) {
 module.exports = {
   userJoin,
   getCurrentUser,
+  getCurrentTicTacToeUser,
   userLeave,
   getRoomUsers,
-  ticTacToeUserJoin
+  ticTacToeUserJoin,
+  getUsersAmt
 };

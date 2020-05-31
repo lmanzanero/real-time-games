@@ -9,7 +9,9 @@ const {
   getCurrentUser,
   userLeave,
   getRoomUsers,
-  ticTacToeUserJoin
+  ticTacToeUserJoin,
+  getUsersAmt,
+  getCurrentTicTacToeUser
 } = require('./utils/users');
 
 const app = express();
@@ -26,13 +28,28 @@ router.get('/tic-tac-toe', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/tic-tac-toe.html'));
 });
 
-router.get('/tic-tac-toe/:room', (req, res) => { 
+router.get('/tic-tac-toe/:room', (req, res) => {  
     io.on('connection', (socket) => {
-      console.log('a user connected bl');
-      socket.on('joinGame', ({userName, roomId}) => { 
-        const user = ticTacToeUserJoin(socket.id, userName, roomId); 
-        socket.join(user.roomId);
-      });
+      console.log('a user connected');
+      if(getUsersAmt() <= 2) {
+        socket.on('joinGame', ({userName, roomId}) => { 
+          const user = ticTacToeUserJoin(socket.id, userName, roomId); 
+          socket.join(user.roomId);
+        });
+
+         // Listen for user pick
+        socket.on('userPick', (cell) => {
+          const user = getCurrentTicTacToeUser(socket.id); 
+          io.to(user.roomId).emit('cell', cell); 
+        });
+
+        socket.on('endGame', (winner) => {
+          const user = getCurrentTicTacToeUser(socket.id);
+            io.to(user.roomId).emit('winner', winner); 
+        });
+      } else {
+        console.log("Cannot Join Game");
+      }
       socket.on('disconnect', () => {
         console.log('user disconnected');
       });
