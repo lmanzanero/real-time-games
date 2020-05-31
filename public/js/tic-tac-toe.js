@@ -21,6 +21,8 @@ const roomId = document.querySelector('#room-name');
 const userList = document.getElementById('users');
 const enterGame = document.querySelector("#enter-game");
 let circleTurn; 
+const socket = io();
+ console.log(socket); 
 
 startGame()
  
@@ -36,17 +38,15 @@ roomId.addEventListener('click', () => {
 });
 
 enterGame.addEventListener('click', () => { 
-  const socket = io();
-  console.log(socket); 
-  socket.emit('joinGame', { username: userName.value, room: roomId.value}); 
+  socket.emit('joinGame', { userName: userName.value, roomId: roomId.value}); 
   // Get room and users
- socket.on('roomUsers', ({ room, users }) => {
-  console.log(roomId, users);
-  outputUsers(users);
- });
-  socket.on('message', game => {
-    console.log(`${game} created`);
-  });
+//  socket.on('roomUsers', ({ room, users }) => {
+//   console.log(room, users, "from tic tac toe.js");
+//   // outputUsers(users);
+//  });
+  // socket.on('message', game => {
+  //   console.log(`${game} created`);
+  // });
 });
 
 // Add users to DOM

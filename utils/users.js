@@ -1,11 +1,18 @@
 const users = [];
+const ticTacToeUsers = [];
+
+function ticTacToeUserJoin(id, userName, roomId) {
+  const user = { id, userName, roomId }
+  ticTacToeUsers.push(user);
+  console.log(ticTacToeUsers, "From users.js");
+  return user
+}
 
 // Join user to chat
 function userJoin(id, username, room) {
   const user = { id, username, room };
 
-  users.push(user);
-
+  users.push(user); 
   return user;
 }
 
@@ -32,5 +39,6 @@ module.exports = {
   userJoin,
   getCurrentUser,
   userLeave,
-  getRoomUsers
+  getRoomUsers,
+  ticTacToeUserJoin
 };
