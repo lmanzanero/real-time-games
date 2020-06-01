@@ -24,14 +24,14 @@ let circleTurn;
 const socket = io();
  console.log(socket); 
 
- socket.on('cell', currentClass => {   
-  console.log(currentClass); 
-});
-
 socket.on('winner', winner => {
   console.log(winner);
   winningMessageTextElement.innerHTML = winner;
   winningMessageElement.classList.add('show');
+});
+
+socket.on('cell', currentSocketCell => {   
+  console.log(currentSocketCell, "From on Cell socket"); 
 });
 
 startGame()
@@ -82,11 +82,12 @@ function startGame() {
 }
 
 function handleClick(e) {  
-  const cell = e.target 
+  const cell = e.target   
+  console.log(Array.from(cellElements).indexOf(cell));
   const currentClass = circleTurn ? CIRCLE_CLASS : X_CLASS 
    // Emit message to server
    socket.emit('userPick', currentClass);
-  placeMark(cell, currentClass)
+   placeMark(cell, currentClass)
   if (checkWin(currentClass)) {
     endGame(false)
   } else if (isDraw()) {
