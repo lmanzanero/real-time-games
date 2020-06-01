@@ -38,10 +38,10 @@ router.get('/tic-tac-toe/:room', (req, res) => {
         });
 
          // Listen for user pick
-        socket.on('userPick', (currentClass) => {
-          console.log(currentClass);
+        socket.on('userPick', ({currentCellIndex, currentClass}) => {
+          console.log(currentCellIndex, currentClass);
           const user = getCurrentTicTacToeUser(socket.id); 
-          io.to(user.roomId).emit('cell', (currentClass)); 
+          io.to(user.roomId).emit('cell', ({currentCellIndex, currentClass})); 
         });
 
         socket.on('endGame', (winner) => {
