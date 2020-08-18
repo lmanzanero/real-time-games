@@ -82,7 +82,8 @@ function startGame() {
   winningMessageElement.classList.remove('show')
 }
 
-function handleClick(e) {  
+function handleClick(e, index) {  
+  console.log(index, "Index of Element");
   const cell = e.target   
   const currentCellIndex = Array.from(cellElements).indexOf(cell);
   const currentClass = circleTurn ? CIRCLE_CLASS : X_CLASS 
