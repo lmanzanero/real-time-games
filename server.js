@@ -28,7 +28,12 @@ router.get('/tic-tac-toe', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/tic-tac-toe.html'));
 });
 
-router.get('/tic-tac-toe/:room', (req, res) => {  
+router.get('/vocab-quiz', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/quiz.html'));
+});
+
+
+router.get('/tic-tac-toe/:room', (req, res) => {    
     io.on('connection', (socket) => {
       console.log('a user connected');
       if(getUsersAmt() <= 2) {
@@ -48,6 +53,10 @@ router.get('/tic-tac-toe/:room', (req, res) => {
           const user = getCurrentTicTacToeUser(socket.id);
             io.to(user.roomId).emit('winner', winner); 
         });
+
+        socket.on('restartGame', () => {
+          console.log('game restarted');
+        })
       } else {
         console.log("Cannot Join Game");
       }
@@ -115,6 +124,6 @@ io.on('connection', socket => {
 
 app.use('/', router);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
