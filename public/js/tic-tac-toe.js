@@ -56,13 +56,13 @@ enterGame.addEventListener('click', () => {
   socket.emit('joinGame', { userName: userName.value, roomId: roomId.value}); 
   
   // Get room and users
-//  socket.on('roomUsers', ({ room, users }) => {
-//   console.log(room, users, "from tic tac toe.js");
-//   // outputUsers(users);
-//  });
-  // socket.on('message', game => {
-  //   console.log(`${game} created`);
-  // });
+ socket.on('roomUsers', ({ room, users }) => {
+  console.log(room, users, "from tic tac toe.js");
+  outputUsers(users);
+ });
+  socket.on('message', game => {
+    console.log(`${game} created`);
+  });
  
 });
  
