@@ -22,13 +22,13 @@
     height: 8vh;
     background-color: bisque;
     color: cornflowerblue;
-    overflow: scroll;
+    overflow-y: scroll;
   }
 
   .header .user-score {
     padding: 1em;
     margin: auto 1em;
-    width: 80px;
+    min-width: 80px;
     border: 1px solid cornflowerblue;
     border-radius: 0.4em;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
@@ -43,8 +43,18 @@
     font-family: monospace;
   }
 
-  .container .questions {
+  .container .questions .current-score {
+    padding: 1em;
+    margin: 1em auto;
+    font-size: 3em;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    text-align: center;
+  }
+
+  .container .questions {
+    box-shadow: rgba(99, 99, 99, 0.4) 0px 2px 8px 0px; 
+    border-radius: 0.4em;
+    text-align: center;
     padding: 1em;
     margin: 1em;
   }
@@ -70,14 +80,24 @@
   .stats-container {
     display: grid;
     grid-template-rows: 2fr 1fr;
+    grid-row-gap: 1em; 
     height: 92vh;
+  }
+
+  .stats-container .stats-graph {
+    border-radius: 0.4em;
+    margin: 1em 1em 0;
+    padding: 0.5em;
+    box-shadow: rgb(214, 194, 167) 3px 3px 6px 0px inset, rgb(214, 194, 167)  -3px -3px 6px 1px inset;
   }
 
   .stats-container .stats {
     background-color: #1f2933;
     color: antiquewhite;
     box-shadow: rgb(49, 56, 56) 3px 3px 6px 0px inset, rgba(51, 48, 48, 0.5) -3px -3px 6px 1px inset;
-    padding: 1em;
+    padding: 1em; 
+    margin: 1em; 
+    border-radius: 0.4em;
     overflow: scroll;
   }
 
@@ -106,19 +126,23 @@
     <div class="user-score">
       <span>25$</span>  
     </div>
-    <div class="user-score">
-      <span>25$</span>  
-    </div>
+    <div class="user-score"><span>25$</span></div>
+    <div class="user-score"><span>25$</span></div>
+    <div class="user-score"><span>25$</span></div>
+    <div class="user-score"><span>25$</span></div>
+    <div class="user-score"><span>25$</span></div>
+    <div class="user-score"><span>25$</span></div>
+    <div class="user-score"><span>25$</span></div>
   </div>
   <div class="container">
     <div class="questions">
+      <div class="current-score">$200</div>
       <div class="question">What is this?</div>
       <div class="answers">
         <div class="answer">Answer 1</div>
         <div class="answer">Answer 1</div>
         <div class="answer">Answer 1</div>
-        <div class="answer">Answer 1</div>
-        
+        <div class="answer">Answer 1</div>  
       </div>
     </div>
     <div class="stats-container">
@@ -143,11 +167,11 @@
   <script>
     var ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'line',
         data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            labels: ['Team 1', 'Team 2', 'Team 3', 'Team 4', 'Team 5', 'Team 6'],
             datasets: [{
-                label: '# of Votes',
+                label: 'Users',
                 data: [12, 19, 3, 5, 2, 3],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
