@@ -5,26 +5,179 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Real Time Quiz</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js"></script>
 </head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: antiquewhite;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: center;
+    height: 8vh;
+    background-color: bisque;
+    color: cornflowerblue;
+    overflow: scroll;
+  }
+
+  .header .user-score {
+    padding: 1em;
+    margin: auto 1em;
+    width: 80px;
+    border: 1px solid cornflowerblue;
+    border-radius: 0.4em;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  }
+
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    height: 92vh;
+    align-items: center;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    font-family: monospace;
+  }
+
+  .container .questions {
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    padding: 1em;
+    margin: 1em;
+  }
+
+  .container .questions .question {
+    font-size: 1.8em;
+  }
+
+  .container .answers .answer {
+    display: grid;
+    place-items: center;
+    height: 50px;
+    margin: 0.7em auto;
+    border: 1px solid sandybrown;
+    border-radius: 0.4em;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+  }
+
+  .container .answers .answer:active { 
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.6) 0px 8px 16px -8px;
+  }
+
+  .stats-container {
+    display: grid;
+    grid-template-rows: 2fr 1fr;
+    height: 92vh;
+  }
+
+  .stats-container .stats {
+    background-color: #1f2933;
+    color: antiquewhite;
+    box-shadow: rgb(49, 56, 56) 3px 3px 6px 0px inset, rgba(51, 48, 48, 0.5) -3px -3px 6px 1px inset;
+    padding: 1em;
+    overflow: scroll;
+  }
+
+  .stats-container .stats .user-action {
+    letter-spacing: 0.3em;  
+    line-height: 2em;
+  }
+</style>
 <body>
+  <div class="header">
+    <div class="user-score">
+      <span>25$</span>  
+    </div>
+    <div class="user-score">
+      <span>25$</span>  
+    </div>
+    <div class="user-score">
+      <span>25$</span>  
+    </div>
+    <div class="user-score">
+      <span>25$</span>  
+    </div>
+    <div class="user-score">
+      <span>25$</span>  
+    </div>
+    <div class="user-score">
+      <span>25$</span>  
+    </div>
+    <div class="user-score">
+      <span>25$</span>  
+    </div>
+  </div>
   <div class="container">
     <div class="questions">
-      <div class="questions">What is this?</div>
+      <div class="question">What is this?</div>
       <div class="answers">
         <div class="answer">Answer 1</div>
         <div class="answer">Answer 1</div>
         <div class="answer">Answer 1</div>
         <div class="answer">Answer 1</div>
+        
       </div>
     </div>
     <div class="stats-container">
         <div class="stats-graph">
-          Graph
+          <canvas id="myChart" width="400" height="400"></canvas>
         </div>
         <div class="stats">
-          Stats
+          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
+          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
+          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
+          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
+          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
+          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
+          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
+          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
+          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
+          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
+          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
         </div>
     </div>
   </div>
+  <script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            maintainAspectRatio: false,
+            responsive: true,
+        }
+    });
+    </script>
 </body>
 </html>

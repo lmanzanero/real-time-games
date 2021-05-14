@@ -33,6 +33,10 @@ router.get('/vocab-quiz', (req, res) => {
 });
 
 
+router.get('/real-time-quiz', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/real-time-quiz.html'))
+})
+
 router.get('/tic-tac-toe/:room', (req, res) => {    
     io.on('connection', (socket) => {
       console.log('a user connected');
