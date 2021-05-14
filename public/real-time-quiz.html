@@ -194,9 +194,9 @@
     question: 'Who is the best YouTuber?',
     answers: [
       { text: 'Web Dev Simplified', correct: true },
-      { text: 'Traversy Media', correct: true },
-      { text: 'Dev Ed', correct: true },
-      { text: 'Fun Fun Function', correct: true }
+      { text: 'Traversy Media', correct: false },
+      { text: 'Dev Ed', correct: false },
+      { text: 'Fun Fun Function', correct: false }
     ]
   },
   {
@@ -212,18 +212,32 @@
     question: 'What is 4 * 2?',
     answers: [
       { text: '6', correct: false },
-      { text: '8', correct: true }
+      { text: '8', correct: false },
+      { text: '10', correct: false },
+      { text: '7', correct: true }
     ]
   }
 ]
     const question = document.querySelector('.questions .question');
     const answers = document.querySelectorAll('.answers .answer');
+    answers.forEach(answer => answer.addEventListener('click', validateAnswer))
     function shuffleQuestion() {
       const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
       question.innerHTML = randomQuestion.question;
       answers.forEach((answer, index) => {
-        answer.innerHTML = randomQuestion.answers[index].text;
+        answer.innerHTML = randomQuestion.answers[index]?.text;
+        answer.setAttribute('is-correct',randomQuestion.answers[index]?.correct)
       })
+    }
+
+   function validateAnswer(answer) { 
+     //todo: make this better
+      if(answer.target.getAttribute('is-correct') === 'true'){
+        console.log("Is correct")
+        shuffleQuestion();
+      } else {
+        console.log("Is wrong")
+      }
     }
 
     shuffleQuestion();
