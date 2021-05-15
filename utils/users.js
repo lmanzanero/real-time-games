@@ -13,10 +13,11 @@ function getUsersAmt(){
 }
 
 // Join user to chat
-function userJoin(id, username, room) {
-  const user = { id, username, room };
+function userJoin(id, username, room, score) {
+  const user = { id, username, room, score };
 
   users.push(user); 
+  console.log(users);
   return user;
 }
 

@@ -26,9 +26,10 @@
   }
 
   .header .user-score {
-    padding: 1em;
+    padding: 0.3em;
     margin: auto 1em;
     min-width: 80px;
+    height: 20px;
     border: 1px solid cornflowerblue;
     border-radius: 0.4em;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
@@ -158,66 +159,19 @@
         <div class="answer">Answer 1</div>
         <div class="answer">Answer 1</div>  
       </div>
+      <ul id="users"></ul>
     </div>
     <div class="stats-container">
         <div class="stats-graph">
           <canvas id="myChart" width="400" height="400"></canvas>
         </div>
         <div class="stats">
-          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
-          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
-          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
-          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
-          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
-          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
-          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
-          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
-          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
-          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
-          <div class="user-action">Luis Manzanero: <span>Got $25</span></div>
+          <div class="user-action"><span></span></div>
         </div>
     </div>
   </div>
+  <script src="/socket.io/socket.io.js"></script>
   <script>
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Team 1', 'Team 2', 'Team 3', 'Team 4', 'Team 5', 'Team 6'],
-            datasets: [{
-                label: 'Users',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            maintainAspectRatio: false,
-            responsive: true,
-        }
-    });
-    </script>
-    <script>
       const questions = [
   {
     question: 'What is 2 + 2?',
@@ -257,11 +211,18 @@
   }
 ]
     const question = document.querySelector('.questions .question');
+    const userList = document.getElementById('users');
+    const socket = io();
+    let allUsers = [];
+    let userData = [];
+    let ctx = document.getElementById('myChart').getContext('2d');
     const answers = document.querySelectorAll('.answers .answer');
     const currentScore = document.querySelector('.container .current-score')
+    let username = '';
+    let room = '';
     let score = 0; 
     answers.forEach(answer => answer.addEventListener('click', validateAnswer))
-    function shuffleQuestion() {
+    function shuffleQuestion() { 
       const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
       question.innerHTML = randomQuestion.question;
       answers.forEach((answer, index) => {
@@ -276,16 +237,93 @@
       if(answer.target.getAttribute('is-correct') === 'true'){  
         score  = score + 5;  
         currentScore.innerHTML = `$${score}`;
+        // Emit message to server
+        socket.emit('userScore', score);  
         shuffleQuestion();
       } else {
         answer.target.classList.add('wrong');
         score  = score - 3;  
         currentScore.innerHTML = `$${score}`;
+        // Emit message to server
+        socket.emit('userScore', score);  
         console.log("Is wrong")
       }
     }
 
     shuffleQuestion();
+    username = prompt('Enter Username: ');
+    room = prompt('Enter Room Id: ');
+    // Join chatroom
+    socket.emit('joinRoom', { username, room, score });
+
+    // Get room and users
+    socket.on('roomUsers', ({ room, users }) => {
+      outputUsers(users);
+      console.log(room, users);    
+    });
+
+    // Add users to DOM
+    function outputUsers(users) {
+      allUsers = users.map(user => user.username);
+      myChart.update();
+      userList.innerHTML = `
+        ${users.map(user => `<li>${user.username}</li>`).join('')}
+      `;
+    }
+
+    // Message from server
+    socket.on('message', message => { 
+      const stats = document.querySelector('.stats');
+      const latestStat = `
+          <div class="user-action">${message.username} <span> ${message.text} at ${message.time}</span></div>
+      `;
+      console.log(latestStat);
+      stats.insertAdjacentHTML("beforeend", latestStat);
+    });
+
+    //all users scores
+    socket.on('chartData', chartData => {
+      console.log(chartData);
+    })
+
     </script>
+      <script>
+       var myChart = new Chart(ctx, {
+           type: 'line',
+           data: {
+               labels: allUsers,
+               datasets: [{
+                   label: 'Users',
+                   data: userData,
+                   backgroundColor: [
+                       'rgba(255, 99, 132, 0.2)',
+                       'rgba(54, 162, 235, 0.2)',
+                       'rgba(255, 206, 86, 0.2)',
+                       'rgba(75, 192, 192, 0.2)',
+                       'rgba(153, 102, 255, 0.2)',
+                       'rgba(255, 159, 64, 0.2)'
+                   ],
+                   borderColor: [
+                       'rgba(255, 99, 132, 1)',
+                       'rgba(54, 162, 235, 1)',
+                       'rgba(255, 206, 86, 1)',
+                       'rgba(75, 192, 192, 1)',
+                       'rgba(153, 102, 255, 1)',
+                       'rgba(255, 159, 64, 1)'
+                   ],
+                   borderWidth: 1
+               }]
+           },
+           options: {
+               scales: {
+                   y: {
+                       beginAtZero: true
+                   }
+               },
+               maintainAspectRatio: false,
+               responsive: true,
+           }
+       });
+       </script>
 </body>
 </html>

@@ -34,97 +34,145 @@ router.get('/vocab-quiz', (req, res) => {
 
 
 router.get('/real-time-quiz', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/real-time-quiz.html'))
+  res.sendFile(path.join(__dirname, 'public/real-time-quiz.html'));
 })
 
 router.get('/tic-tac-toe/:room', (req, res) => {    
-    io.on('connection', (socket) => {
-      console.log('a user connected');
-      if(getUsersAmt() <= 2) {
-        socket.on('joinGame', ({userName, roomId}) => { 
-          const user = ticTacToeUserJoin(socket.id, userName, roomId); 
-          socket.join(user.roomId);
-        });
+    // io.on('connection', (socket) => {
+    //   console.log('a user connected');
+    //   if(getUsersAmt() <= 2) {
+    //     socket.on('joinGame', ({userName, roomId}) => { 
+    //       const user = ticTacToeUserJoin(socket.id, userName, roomId); 
+    //       socket.join(user.roomId);
+    //     });
 
-         // Listen for user pick
-        socket.on('userPick', ({currentCellIndex, currentClass}) => {
-          console.log(currentCellIndex, currentClass);
-          const user = getCurrentTicTacToeUser(socket.id); 
-          io.to(user.roomId).emit('cell', ({currentCellIndex, currentClass})); 
-        });
+    //      // Listen for user pick
+    //     socket.on('userPick', ({currentCellIndex, currentClass}) => {
+    //       console.log(currentCellIndex, currentClass);
+    //       const user = getCurrentTicTacToeUser(socket.id); 
+    //       io.to(user.roomId).emit('cell', ({currentCellIndex, currentClass})); 
+    //     });
 
-        socket.on('endGame', (winner) => {
-          const user = getCurrentTicTacToeUser(socket.id);
-            io.to(user.roomId).emit('winner', winner); 
-        });
+    //     socket.on('endGame', (winner) => {
+    //       const user = getCurrentTicTacToeUser(socket.id);
+    //         io.to(user.roomId).emit('winner', winner); 
+    //     });
 
-        socket.on('restartGame', () => {
-          console.log('game restarted');
-        })
-      } else {
-        console.log("Cannot Join Game");
-      }
-      socket.on('disconnect', () => {
-        console.log('user disconnected');
-      });
-    });
+    //     socket.on('restartGame', () => {
+    //       console.log('game restarted');
+    //     })
+    //   } else {
+    //     console.log("Cannot Join Game");
+    //   }
+    //   socket.on('disconnect', () => {
+    //     console.log('user disconnected');
+    //   });
+    // });
     res.sendFile(path.join(__dirname, 'public/tic-tac-toe.html'));
 });
 
-const botName = 'ChatCord Bot';
-
-
-// Run when client connects
-io.on('connection', socket => { 
-  socket.on('joinRoom', ({ username, room }) => {
-    const user = userJoin(socket.id, username, room);
+io.on('connection', (socket) => {
+  console.log('A user connected');
+  socket.on('joinRoom', ({username, room, score}) => {
+    const user = userJoin(socket.id, username, room, score);
 
     socket.join(user.room);
 
+    const botName = 'ChatCord Bot';
     // Welcome current user
     socket.emit('message', formatMessage(botName, 'Welcome to ChatCord!'));
 
     // Broadcast when a user connects
     socket.broadcast
-      .to(user.room)
-      .emit(
-        'message',
-        formatMessage(botName, `${user.username} has joined the chat`)
-      );
+    .to(user.room)
+    .emit(
+      'message',
+      formatMessage(botName, `${user.username} has joined the chat`)
+    );
 
     // Send users and room info
     io.to(user.room).emit('roomUsers', {
       room: user.room,
       users: getRoomUsers(user.room)
     });
-  });
+
+    // Listen for user score
+    socket.on('userScore', msg => {
+      const user = getCurrentUser(socket.id);
+      io.to(user.room).emit('chartData', getAndUpdateUsersScore(user.username, msg));
+      io.to(user.room).emit('message', formatMessage(user.username, msg));
+    });
+
+     //keep track of score and emit to all users charts
+    const usersScores = [];
+    function getAndUpdateUsersScore(user, score) {
+      // console.log(user, score);
+      let userScore =  { username: user, score: score}  
+      usersScores.push(userScore);    
+        //find entry 
+      //update entry
+      console.log(usersScores);
+      // currentUser = usersScores.findIndex(obj => obj.username == user)
+      // usersScores[currentUser].score = score;
+      // console.log(usersScores, "updated entry")
+    }
+  })
+})
+
+// const botName = 'ChatCord Bot';
+
+
+// // Run when client connects
+// io.on('connection', socket => { 
+//   socket.on('joinRoom', ({ username, room }) => {
+//     const user = userJoin(socket.id, username, room);
+
+//     socket.join(user.room);
+
+//     // Welcome current user
+//     socket.emit('message', formatMessage(botName, 'Welcome to ChatCord!'));
+
+//     // Broadcast when a user connects
+//     socket.broadcast
+//       .to(user.room)
+//       .emit(
+//         'message',
+//         formatMessage(botName, `${user.username} has joined the chat`)
+//       );
+
+//     // Send users and room info
+//     io.to(user.room).emit('roomUsers', {
+//       room: user.room,
+//       users: getRoomUsers(user.room)
+//     });
+//   });
       
 
-  // Listen for chatMessage
-  socket.on('chatMessage', msg => {
-    const user = getCurrentUser(socket.id);
+//   // Listen for chatMessage
+//   socket.on('chatMessage', msg => {
+//     const user = getCurrentUser(socket.id);
 
-    io.to(user.room).emit('message', formatMessage(user.username, msg));
-  });
+//     io.to(user.room).emit('message', formatMessage(user.username, msg));
+//   });
 
-  // Runs when client disconnects
-  socket.on('disconnect', () => {
-    const user = userLeave(socket.id);
+//   // Runs when client disconnects
+//   socket.on('disconnect', () => {
+//     const user = userLeave(socket.id);
 
-    if (user) {
-      io.to(user.room).emit(
-        'message',
-        formatMessage(botName, `${user.username} has left the chat`)
-      );
+//     if (user) {
+//       io.to(user.room).emit(
+//         'message',
+//         formatMessage(botName, `${user.username} has left the chat`)
+//       );
 
-      // Send users and room info
-      io.to(user.room).emit('roomUsers', {
-        room: user.room,
-        users: getRoomUsers(user.room)
-      });
-    }
-  });
-});
+//       // Send users and room info
+//       io.to(user.room).emit('roomUsers', {
+//         room: user.room,
+//         users: getRoomUsers(user.room)
+//       });
+//     }
+//   });
+// });
 
 app.use('/', router);
 
