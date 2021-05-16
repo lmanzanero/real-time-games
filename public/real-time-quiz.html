@@ -189,9 +189,10 @@
     const question = document.querySelector('.questions .question');
     const userList = document.getElementById('users');
     const socket = io();
-    const allUsers = [];
-    let userData = [];
+    let allUsers = [];
+    const userData = [];
     let allScores = [];
+    let allUserScores = [];
     let ctx = document.getElementById('myChart').getContext('2d');
     const answers = document.querySelectorAll('.answers .answer');
     const currentScore = document.querySelector('.container .current-score')
@@ -224,7 +225,7 @@
         currentScore.innerHTML = `$${score}`;
         // Emit message to server
         socket.emit('userScore', score);  
-        allScores.push(score);
+        allScores.push(score); 
       }
 
       //show user scores to dom
@@ -262,29 +263,62 @@
     }
 
     // Message from server
-    socket.on('message', message => { 
+    socket.on('message', message => {    
       const stats = document.querySelector('.stats');
       const latestStat = `
           <div class="user-action">${message.username} <span> ${message.text} at ${message.time}</span></div>
       `;
       console.log(latestStat);
       stats.insertAdjacentHTML("beforeend", latestStat);
+      const allStats = document.querySelectorAll('.stats .user-action');
+      //check to see if user exists 
+      // console.log(userData);
+      if(userData.length <= 0){
+        if(message.username != "ChatCord Bot") { 
+          userData.push({[message.username] : message.text})
+        }
+      } else {
+        //update object
+        console.log("User already exists, updating it's score") 
+        for( let i in userData ) {
+          console.log(userData[i]);
+          userData[i][message.username] = message.text;
+          if(allUserScores.length <= allUsers) {
+            console.log("Adding Value less than array")
+            allUserScores.push(userData[i][message.username])
+          } else {
+            console.log("Will add and remove last values"); 
+            allUserScores.push(userData[i][message.username])
+            allUserScores.slice(1);
+          }
+          // allScores.push(userData[i][message.username]); 
+        }  
+         
+        //make score and users array from user data
+        // const userKeys = userData.map(user => Object.keys(user));
+        // allUsersScores = [];
+        // const data = userData.map(user => Object.values(user));
+        // allUserScores.push(data[0])
+        console.log(allUserScores, "All Users Scores"); 
+        myChart.update();  
+      }  
+      myChart.update(); 
     });
 
-    //all users scores
-    socket.on('chartData', chartData => {
-      console.log(chartData);
-    })
+    // //all users scores
+    // socket.on('chartData', chartData => {
+    //   console.log(chartData);
+    // })
 
     </script>
       <script>
        var myChart = new Chart(ctx, {
-           type: 'line',
+           type: 'bar',
            data: {
                labels: allUsers,
                datasets: [{
                    label: 'Users',
-                   data: userData,
+                   data: allUserScores,
                    backgroundColor: [
                        'rgba(255, 99, 132, 0.2)',
                        'rgba(54, 162, 235, 0.2)',
