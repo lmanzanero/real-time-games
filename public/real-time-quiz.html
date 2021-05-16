@@ -123,7 +123,7 @@
 </style>
 <body>
   <div class="header">
-    <div class="user-score"><span>25$</span></div> 
+    <div class="user-score"><span>$0</span></div> 
   </div>
   <div class="container">
     <div class="questions">
@@ -189,7 +189,7 @@
     const question = document.querySelector('.questions .question');
     const userList = document.getElementById('users');
     const socket = io();
-    let allUsers = [];
+    const allUsers = [];
     let userData = [];
     let allScores = [];
     let ctx = document.getElementById('myChart').getContext('2d');
@@ -230,7 +230,7 @@
       //show user scores to dom
       const userScores = document.querySelector('.header');
       const userScore = `
-            <div class="user-score"><span>${score}</span></div> 
+            <div class="user-score"><span>$${score}</span></div> 
       `;
       userScores.insertAdjacentHTML("beforeend", userScore);
     }
@@ -248,9 +248,14 @@
     });
 
     // Add users to DOM
-    function outputUsers(users) {
-      allUsers = users.map(user => user.username);
-      myChart.update();
+    function outputUsers(users) { 
+        users.forEach((user, index )=> {  
+          if(!allUsers.includes(user.username)){
+            allUsers.push(user.username)
+          }
+        });
+        myChart.update(); 
+     
       userList.innerHTML = `
         ${users.map(user => `<li>${user.username}</li>`).join('')}
       `;
