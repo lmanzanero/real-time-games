@@ -123,31 +123,7 @@
 </style>
 <body>
   <div class="header">
-    <div class="user-score">
-      <span>25$</span>  
-    </div>
-    <div class="user-score">
-      <span>25$</span>  
-    </div>
-    <div class="user-score">
-      <span>25$</span>  
-    </div>
-    <div class="user-score">
-      <span>25$</span>  
-    </div>
-    <div class="user-score">
-      <span>25$</span>  
-    </div>
-    <div class="user-score">
-      <span>25$</span>  
-    </div>
-    <div class="user-score"><span>25$</span></div>
-    <div class="user-score"><span>25$</span></div>
-    <div class="user-score"><span>25$</span></div>
-    <div class="user-score"><span>25$</span></div>
-    <div class="user-score"><span>25$</span></div>
-    <div class="user-score"><span>25$</span></div>
-    <div class="user-score"><span>25$</span></div>
+    <div class="user-score"><span>25$</span></div> 
   </div>
   <div class="container">
     <div class="questions">
@@ -215,6 +191,7 @@
     const socket = io();
     let allUsers = [];
     let userData = [];
+    let allScores = [];
     let ctx = document.getElementById('myChart').getContext('2d');
     const answers = document.querySelectorAll('.answers .answer');
     const currentScore = document.querySelector('.container .current-score')
@@ -239,6 +216,7 @@
         currentScore.innerHTML = `$${score}`;
         // Emit message to server
         socket.emit('userScore', score);  
+        allScores.push(score);
         shuffleQuestion();
       } else {
         answer.target.classList.add('wrong');
@@ -246,8 +224,15 @@
         currentScore.innerHTML = `$${score}`;
         // Emit message to server
         socket.emit('userScore', score);  
-        console.log("Is wrong")
+        allScores.push(score);
       }
+
+      //show user scores to dom
+      const userScores = document.querySelector('.header');
+      const userScore = `
+            <div class="user-score"><span>${score}</span></div> 
+      `;
+      userScores.insertAdjacentHTML("beforeend", userScore);
     }
 
     shuffleQuestion();
