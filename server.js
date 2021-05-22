@@ -112,9 +112,9 @@ io.on('connection', (socket) => {
         //find entry 
       //update entry
       console.log(usersScores);
-      // currentUser = usersScores.findIndex(obj => obj.username == user)
-      // usersScores[currentUser].score = score;
-      // console.log(usersScores, "updated entry")
+      currentUser = usersScores.findIndex(obj => obj.username == user)
+      usersScores[currentUser].score = score;
+      console.log(usersScores, "updated entry")
     }
   })
 })

@@ -139,7 +139,7 @@
     </div>
     <div class="stats-container">
         <div class="stats-graph">
-          <canvas id="myChart" width="400" height="400"></canvas>
+          <!-- <canvas id="myChart" width="400" height="400"></canvas> -->
         </div>
         <div class="stats">
           <div class="user-action"><span></span></div>
@@ -193,7 +193,7 @@
     const userData = [];
     let allScores = [];
     let allUserScores = [];
-    let ctx = document.getElementById('myChart').getContext('2d');
+    // let ctx = document.getElementById('myChart').getContext('2d');
     const answers = document.querySelectorAll('.answers .answer');
     const currentScore = document.querySelector('.container .current-score')
     let username = '';
@@ -255,7 +255,7 @@
             allUsers.push(user.username)
           }
         });
-        myChart.update(); 
+        // myChart.update(); 
      
       userList.innerHTML = `
         ${users.map(user => `<li>${user.username}</li>`).join('')}
@@ -280,29 +280,36 @@
       } else {
         //update object
         console.log("User already exists, updating it's score") 
-        for( let i in userData ) {
-          console.log(userData[i]);
+        for( let i in userData ) { 
           userData[i][message.username] = message.text;
-          if(allUserScores.length <= allUsers) {
-            console.log("Adding Value less than array")
-            allUserScores.push(userData[i][message.username])
-          } else {
-            console.log("Will add and remove last values"); 
-            allUserScores.push(userData[i][message.username])
-            allUserScores.slice(1);
-          }
+          // if(allUserScores.length <= allUsers) {
+          //   console.log("Adding Value less than array")
+          //   allUserScores.push(userData[i][message.username])
+          // } else {
+          //   console.log("Will add and remove last values"); 
+          //   allUserScores.push(userData[i][message.username])
+          //   allUserScores.slice(1);
+          // }
           // allScores.push(userData[i][message.username]); 
-        }  
+        } 
+        
+        const statsGraph = document.querySelector('.stats-graph');
+        statsGraph.innerHTML = '';
+        Object.keys(userData[0]).forEach((key) => {
+          console.log(key, userData[0][key])
+          let userStat = `<p>${key} value: $${userData[0][key]}</p>`;
+          statsGraph.insertAdjacentHTML("beforeend", userStat);
+        });
          
         //make score and users array from user data
         // const userKeys = userData.map(user => Object.keys(user));
         // allUsersScores = [];
         // const data = userData.map(user => Object.values(user));
         // allUserScores.push(data[0])
-        console.log(allUserScores, "All Users Scores"); 
-        myChart.update();  
+        // console.log(allUserScores, "All Users Scores"); 
+        // myChart.update();  
       }  
-      myChart.update(); 
+      // myChart.update(); 
     });
 
     // //all users scores
@@ -311,7 +318,7 @@
     // })
 
     </script>
-      <script>
+      <!-- <script>
        var myChart = new Chart(ctx, {
            type: 'bar',
            data: {
@@ -348,6 +355,6 @@
                responsive: true,
            }
        });
-       </script>
+       </script> -->
 </body>
 </html>
