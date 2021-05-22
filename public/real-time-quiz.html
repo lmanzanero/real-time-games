@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<lang lang="en">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -120,6 +120,133 @@
     font-weight: bolder;
     letter-spacing: normal;
   }
+</style> 
+<style>
+  .mic-checkbox {
+  display: none;
+}
+
+.mic-checkbox:checked + .mic-button {
+  transform: rotateY(180deg);
+}
+
+.mic-checkbox:checked + .mic-button span{
+ /* display: none;*/
+}
+
+.button-container {
+  position: relative;  
+  height: 0;
+  -moz-perspective: 500px;
+  -webkit-perspective: 500px;
+}
+
+.mic-button {
+  position: absolute;
+  left: 80%;
+  top: -50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  width: 60px;
+  border-radius: 100%;
+  transition: transform 0.4s;
+  border: 2px solid #fff;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  position: relative;
+}
+
+.button-message, .mic {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+}
+
+.button-message {
+  position: absolute; 
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+  text-align: center; 
+  font-size: 10px;
+  z-index: 2;
+  transform: rotateY(0deg);
+  pointer-events: none; 
+}
+
+.mic-button-loader {
+  position: absolute;
+  height: 65px;
+  width: 65px;
+  background-color: transparent;
+  transform: rotateY(180deg);  
+  left: -30px;
+  top: -12px;
+}
+
+.mic-checkbox:checked + .mic-button > .mic > .mic-button-loader {
+  border-top: 3px solid skyblue;
+  border-radius: 100%;
+  animation: borderLoader 1.3s 0.2s ease-in-out infinite; 
+}
+
+.mic {
+  position: relative;
+  top: -10px;
+  border: 10px solid #fff;
+  height: 20px;
+  width: 0;
+  border-radius: 10px;
+  transform: rotateY(180deg);
+}
+
+.mic:after, .mic:before, .mic-base {
+  position: absolute;
+}
+
+.mic:after {
+  content: ""; 
+  left: -17px;
+  top: 10px;
+  height: 20px;
+  width: 26px;
+  background-color: transparent;
+  border: 4px solid #fff;
+  border-bottom-left-radius: 110px;
+  border-bottom-right-radius: 110px;
+  border-top: 0;
+  
+}
+
+.mic:before {
+  content: "";
+  top: 25px;
+  left: -2px;
+  border-bottom: 18px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #fff;
+}
+
+.mic-base {
+  top: 40px;
+  left: -10px;
+  border-bottom: 5px solid #fff;
+  border-left: 10px solid #fff;
+  border-right: 10px solid #fff;
+}
+
+@keyframes borderLoader {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
 </style>
 <body>
   <div class="header">
@@ -127,7 +254,23 @@
   </div>
   <div class="container">
     <div class="questions">
-      <h4 class="username"></h4>
+      <h4 class="username">username</h4>
+      <div class="button-container">
+        <input type="checkbox" id="micButton" class="mic-checkbox">
+        <label for="micButton" class="mic-button">
+          <div class='mic'>
+            <div class='mic-button-loader'>
+            </div>
+            <div class="mic-base">
+            </div>
+          </div>
+          <div class="button-message">
+            <span>
+              PRESS TO TALK
+            </span>
+          </div>
+        </label>
+      </div>
       <div class="current-score">0</div>
       <div class="question">What is this?</div>
       <div class="answers">
