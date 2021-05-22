@@ -80,7 +80,7 @@ io.on('connection', (socket) => {
 
     const botName = 'ChatCord Bot';
     // Welcome current user
-    socket.emit('message', formatMessage(botName, 'Welcome to ChatCord!'));
+    socket.emit('message', formatMessage(botName, 'Welcome to Live Quiz!'));
 
     // Broadcast when a user connects
     socket.broadcast
@@ -109,9 +109,7 @@ io.on('connection', (socket) => {
       // console.log(user, score);
       let userScore =  { username: user, score: score}  
       usersScores.push(userScore);    
-        //find entry 
-      //update entry
-      console.log(usersScores);
+      //find entry  
       currentUser = usersScores.findIndex(obj => obj.username == user)
       usersScores[currentUser].score = score;
       console.log(usersScores, "updated entry")
