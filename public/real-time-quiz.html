@@ -16,13 +16,15 @@
 
   .header {
     display: flex;
-    flex-direction: row;
+    flex-direction: row-reverse;
     justify-content: space-between;
     text-align: center;
     height: 8vh;
     background-color: bisque;
     color: cornflowerblue;
     overflow-y: scroll;
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y proximity;
   }
 
   .header .user-score {
@@ -33,6 +35,13 @@
     border: 1px solid cornflowerblue;
     border-radius: 0.4em;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  }
+
+  .active-user {
+    background-color: #1f2933;
+    color: antiquewhite;
+    padding: 1em;
+    margin: 1em;
   }
 
   .container {
@@ -152,7 +161,7 @@
   width: 60px;
   border-radius: 100%;
   transition: transform 0.4s;
-  border: 2px solid #fff;
+  border: 2px solid darkcyan;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
   -moz-transform-style: preserve-3d;
@@ -167,7 +176,7 @@
 
 .button-message {
   position: absolute; 
-  color: #fff;
+  color: darkcyan;
   font-family: 'Montserrat', sans-serif;
   font-weight: bold;
   text-align: center; 
@@ -179,25 +188,25 @@
 
 .mic-button-loader {
   position: absolute;
-  height: 65px;
-  width: 65px;
+  height: 60px;
+  width: 60px;
   background-color: transparent;
   transform: rotateY(180deg);  
   left: -30px;
-  top: -12px;
+  top: -18px;
 }
 
 .mic-checkbox:checked + .mic-button > .mic > .mic-button-loader {
-  border-top: 3px solid skyblue;
+  border-top: 4px solid darkseagreen;
   border-radius: 100%;
-  animation: borderLoader 1.3s 0.2s ease-in-out infinite; 
+  animation: borderLoader 1.3s 0.2s ease-in-out infinite;  
 }
 
 .mic {
   position: relative;
   top: -10px;
-  border: 10px solid #fff;
-  height: 20px;
+  border: 10px solid cadetblue;
+  height: 10px;
   width: 0;
   border-radius: 10px;
   transform: rotateY(180deg);
@@ -210,11 +219,11 @@
 .mic:after {
   content: ""; 
   left: -17px;
-  top: 10px;
-  height: 20px;
+  top: 1px;
+  height: 22px;
   width: 26px;
   background-color: transparent;
-  border: 4px solid #fff;
+  border: 4px solid darkcyan;
   border-bottom-left-radius: 110px;
   border-bottom-right-radius: 110px;
   border-top: 0;
@@ -223,19 +232,19 @@
 
 .mic:before {
   content: "";
-  top: 25px;
+  top: 20px;
   left: -2px;
-  border-bottom: 18px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #fff;
+  border-bottom: 18px solid darkcyan;
+  border-left: 2px solid darkcyan;
+  border-right: 2px solid darkcyan;
 }
 
 .mic-base {
-  top: 40px;
+  top: 35px;
   left: -10px;
-  border-bottom: 5px solid #fff;
-  border-left: 10px solid #fff;
-  border-right: 10px solid #fff;
+  border-bottom: 5px solid darkcyan;
+  border-left: 10px solid darkcyan;
+  border-right: 10px solid darkcyan;
 }
 
 @keyframes borderLoader {
@@ -279,6 +288,8 @@
         <div class="answer">Answer 1</div>
         <div class="answer">Answer 1</div>  
       </div>
+      <p>These users are playing:</p> 
+      <br/>
       <ul id="users"></ul>
     </div>
     <div class="stats-container">
@@ -303,30 +314,30 @@
     ]
   },
   {
-    question: 'Who is the best YouTuber?',
+    question: 'What is your name?',
     answers: [
-      { text: 'Web Dev Simplified', correct: true },
-      { text: 'Traversy Media', correct: false },
-      { text: 'Dev Ed', correct: false },
-      { text: 'Fun Fun Function', correct: false }
+      { text: 'My name is Dora.', correct: true },
+      { text: 'What do you mean?', correct: false },
+      { text: 'Because I like pizza.', correct: false },
+      { text: 'Your name is Dora.', correct: false }
     ]
   },
   {
-    question: 'Is web development fun?',
+    question: 'What did you do yesterday?',
     answers: [
-      { text: 'Kinda', correct: false },
-      { text: 'YES!!!', correct: true },
-      { text: 'Um no', correct: false },
-      { text: 'IDK', correct: false }
+      { text: 'I eat a lot of pizza', correct: false },
+      { text: 'I ate a lot of pizza', correct: true },
+      { text: 'I will eat a lot of pizza.', correct: false },
+      { text: 'I am eating a lot of pizza.', correct: false }
     ]
   },
   {
-    question: 'What is 4 * 2?',
+    question: 'What will you do tomorrow?',
     answers: [
-      { text: '6', correct: false },
-      { text: '8', correct: false },
-      { text: '10', correct: false },
-      { text: '7', correct: true }
+      { text: 'I played video games.', correct: false },
+      { text: 'I am playing videos games.', correct: false },
+      { text: 'I play video games everyday.', correct: false },
+      { text: 'I will play video games tomorrow', correct: true }
     ]
   }
 ]
@@ -341,6 +352,7 @@
     let ctx = document.getElementById('myChart').getContext('2d');
     const answers = document.querySelectorAll('.answers .answer');
     const currentScore = document.querySelector('.container .current-score')
+    const microPhone = document.querySelector('.button-container')
     let username = '';
     let room = '';
     let score = 0; 
@@ -402,7 +414,7 @@
         //   }
         // }); 
       userList.innerHTML = `
-        ${users.map(user => `<li>${user.username}</li>`).join('')}
+        ${users.map(user => `<span class="active-user">${user.username}</span>`).join('')}
       `;
     }
 
@@ -438,68 +450,81 @@
         // make score and users array from user data
         const userNames = userData.map(user => Object.keys(user)); 
         const userValues = userData.map(user => Object.values(user)); 
-        console.log(userNames, userValues); 
+        //add array to chart datasets
         myChart.data.labels = userNames[0];
         myChart.data.datasets[0].data = userValues[0];
+        //make sure chatcord is deleted from array so it doesn't display on chart labels
         userNames[0].forEach((user, i) => {
          if(user.includes("ChatCord Bot")) {
           console.log(user);
            userNames[0].splice(i, 1);
          }
         });
+         //make sure strings eg. ChartCordbot isn't added as a dataset
         userValues[0].forEach((value, i) => {
           if(isNaN(value)) {
             userValues[0].splice(i, 1);
           }
-        })
-        console.log(userNames[0])
+        }) 
+        //update changes to chart
         myChart.update();  
       }   
-    });
+    }); 
 
-    // //all users scores
-    // socket.on('chartData', chartData => {
-    //   console.log(chartData);
-    // })
+    // microPhone.addEventListener('click', (e) => {
+    //   console.log(e);
+    //   window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    //   const recognition = new SpeechRecognition();
+    //   recognition.interimResults = true; 
+
+    //   recognition.addEventListener('result', (e) => {
+    //     const transcript = Array.from(e.results)
+    //     .map(result => result[0])
+    //     .map(result => result.transcript)
+    //     .join(''); 
+    //     msg.value = transcript; 
+    //     console.log(transcript);
+    //   });
+    // });
 
     </script>
-      <script>
-       var myChart = new Chart(ctx, {
-           type: 'pie',
-           data: {
-               labels: allUsers,
-               datasets: [{
-                   label: 'Users',
-                   data: allUserScores,
-                   backgroundColor: [
-                       'rgba(255, 99, 132, 0.2)',
-                       'rgba(54, 162, 235, 0.2)',
-                       'rgba(255, 206, 86, 0.2)',
-                       'rgba(75, 192, 192, 0.2)',
-                       'rgba(153, 102, 255, 0.2)',
-                       'rgba(255, 159, 64, 0.2)'
-                   ],
-                   borderColor: [
-                       'rgba(255, 99, 132, 1)',
-                       'rgba(54, 162, 235, 1)',
-                       'rgba(255, 206, 86, 1)',
-                       'rgba(75, 192, 192, 1)',
-                       'rgba(153, 102, 255, 1)',
-                       'rgba(255, 159, 64, 1)'
-                   ],
-                   borderWidth: 1
-               }]
-           },
-           options: {
-               scales: {
-                   y: {
-                       beginAtZero: true
-                   }
-               },
-               maintainAspectRatio: false,
-               responsive: true,
-           }
-       });
-       </script>
+    <script>
+      var myChart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+              labels: allUsers,
+              datasets: [{
+                  label: 'Users',
+                  data: allUserScores,
+                  backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(255, 206, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)',
+                      'rgba(153, 102, 255, 0.2)',
+                      'rgba(255, 159, 64, 0.2)'
+                  ],
+                  borderColor: [
+                      'rgba(255, 99, 132, 1)',
+                      'rgba(54, 162, 235, 1)',
+                      'rgba(255, 206, 86, 1)',
+                      'rgba(75, 192, 192, 1)',
+                      'rgba(153, 102, 255, 1)',
+                      'rgba(255, 159, 64, 1)'
+                  ],
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              },
+              maintainAspectRatio: false,
+              responsive: true,
+          }
+      });
+      </script>
 </body>
 </html>
