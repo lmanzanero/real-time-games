@@ -1,5 +1,5 @@
 # Real Time Games 🎮 
-🤪Real Time Games with websockets using Node.js, Express and Socket.io. 👾
+🤪 Real Time Games with websockets using Node.js, Express and Socket.io. 👾
 
 This is a collection of games from tutorials all over the web. Feel free to suggest and add new games! 🕹
 
@@ -11,5 +11,5 @@ npm run dev
 Go to localhost:3000
 ```
 
-[demo](https://real-time-games.vercel.app/)
+[demo](http://real-time-games-staging.herokuapp.com/)
 
