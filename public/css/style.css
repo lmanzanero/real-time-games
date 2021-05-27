@@ -400,9 +400,19 @@ footer a {
   background-color: white;
   border-radius: 0.25rem;
   box-shadow: 0 20px 40px -14px rgba(0, 0, 0, 0.25);
-  display: flex;
+  display: flex; 
   flex-direction: column;
   overflow: hidden;
+}
+
+.card_image {
+  height: 280px; 
+}
+
+.card_image img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
 
 .card_content {
