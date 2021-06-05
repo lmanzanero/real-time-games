@@ -7,6 +7,7 @@
   <title>Real Time Quiz</title>
   <link rel="stylesheet" href="css/real-time-quiz.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js"></script>
+  <script src="js/real-time-quiz/utils.js"></script>
 </head> 
 <body>
   <div class="header">
@@ -54,7 +55,7 @@
     </div>
   </div>
   <script src="/socket.io/socket.io.js"></script>
-  <script type="module">
+  <script>
       const questions = [
   {
     question: 'What is 2 + 2?',
@@ -93,7 +94,7 @@
     ]
   }
 ]
-    import { isAnswerSaidCorrectly } from '/public/js/real-time-quiz/utils.js';
+    // import { isAnswerSaidCorrectly } from '/public/js/real-time-quiz/utils.js';
     const question = document.querySelector('.questions .question');
     const currentUser = document.querySelector('.username')
     const userList = document.getElementById('users');
@@ -187,11 +188,11 @@
     }
 
     shuffleQuestion();
-    // username = prompt('Enter Username: ');
-    // currentUser.innerHTML = username;
-    // room = prompt('Enter Room Id: ');
+    username = prompt('Enter Username: ');
+    currentUser.innerHTML = username;
+    room = prompt('Enter Room Id: ');
     // Join gameroom
-    // socket.emit('joinRoom', { username, room, score });
+    socket.emit('joinRoom', { username, room, score });
 
     // Get room and users
     socket.on('roomUsers', ({ room, users }) => {
