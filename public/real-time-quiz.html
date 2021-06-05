@@ -16,7 +16,7 @@
     <div class="questions">
       <h4 class="username">username</h4>
       <div class="button-container">
-        <input type="checkbox" id="micButton" class="mic-checkbox">
+        <input type="checkbox" name="microphone" id="micButton" class="mic-checkbox">
         <label for="micButton" class="mic-button">
           <div class='mic'>
             <div class='mic-button-loader'>
@@ -53,7 +53,7 @@
     </div>
   </div>
   <script src="/socket.io/socket.io.js"></script>
-  <script>
+  <script type="module">
       const questions = [
   {
     question: 'What is 2 + 2?',
@@ -92,11 +92,32 @@
     ]
   }
 ]
+    import { isAnswerSaidCorrectly } from '/public/js/real-time-quiz/utils.js';
     const question = document.querySelector('.questions .question');
     const currentUser = document.querySelector('.username')
     const userList = document.getElementById('users');
-    // const socket = io();
     let isDisabled = true;
+    let speech = '';
+    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.interimResults = true; 
+    recognition.addEventListener('result', (e) => {
+    const transcript = Array.from(e.results)
+      .map(result => result[0])
+      .map(result => result.transcript)
+      .join(''); 
+      speech = transcript;  
+      if(isAnswerSaidCorrectly(question.innerHTML, speech)) {
+        question.style.color = 'green';
+        isDisabled = false;
+        microPhone.checked = false;
+        answers.forEach(answer => {
+          answer.disabled = isDisabled;
+        })
+      }  
+    });
+
+    // const socket = io()
     let allUsers = [];
     const userData = [];
     let allScores = [];
@@ -104,30 +125,37 @@
     let ctx = document.getElementById('myChart').getContext('2d');
     const answers = document.querySelectorAll('.answers .answer');
     const currentScore = document.querySelector('.container .current-score')
-    const microPhone = document.querySelector('.button-container')
+    const microPhone = document.querySelector('.button-container input[name=microphone]')
     let username = '';
     let room = '';
     let score = 0; 
 
-    microPhone.addEventListener('click', (e) => {
-      e.preventDefault();
-      isDisabled = false;
-      console.log("test");
-      answers.forEach(answer => {
-        answer.disabled = isDisabled;
-      })
+    microPhone.addEventListener('change', (e) => { 
+      // e.preventDefault(); 
+      console.log(e);
+      if(e.target.checked) {
+        //listen for speech
+        recognition.start();  
+      } else {
+        recognition.stop();
+      }
     });
     answers.forEach(answer => answer.addEventListener('click', validateAnswer));
 
-    function shuffleQuestion() { 
+    function shuffleQuestion() {  
+      recognition.stop(); 
+      microPhone.checked = false;
+      question.style.color = 'black';
+      speech = '';
       isDisabled = true;
       const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
-      question.innerHTML = randomQuestion.question;
+      question.innerHTML = randomQuestion.question; 
       answers.forEach((answer, index) => { 
         answer.disabled = isDisabled; 
         answer.classList.remove('wrong');
         answer.innerHTML = randomQuestion.answers[index]?.text;
         answer.setAttribute('is-correct',randomQuestion.answers[index]?.correct); 
+        console.log(isDisabled, answer);
       })
     }
 
