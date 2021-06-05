@@ -2,7 +2,7 @@ body {
   margin: 0;
   padding: 0;
   width: 100%;
-  background-color:burlywood;
+  background-color:cadetblue;
 }
 
 .notice-msg {
@@ -31,7 +31,8 @@ body {
   margin: auto 1em;
   min-width: 80px;
   height: 20px;
-  border: 1px solid burlywood;
+  font-weight: 900;
+  border: 2px solid cadetblue;
   border-radius: 0.4em;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
@@ -46,7 +47,8 @@ body {
 .container {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  height: 92vh;
+  height: 92vh; 
+  width: 100vw;
   align-items: center;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   font-family: monospace;
@@ -56,17 +58,17 @@ body {
   padding: 1em;
   margin: 1em auto;
   font-size: 3em;
-  background-color: bisque;
-  border: 3px solid burlywood;
+  background-color: cadetblue;
+  border: 3px solid #1f2933;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   text-align: center;
 }
 
 .container .questions {
   box-shadow: rgba(99, 99, 99, 0.4) 0px 2px 8px 0px; 
-  background-color: blanchedalmond;
+  background-color:aliceblue;
   border-radius: 0.4em;
-  text-align: center;
+  text-align: center;  
   padding: 1em;
   margin: 1em;
 }
@@ -107,6 +109,7 @@ body {
   grid-template-rows: 2fr 1fr;
   grid-row-gap: 1em; 
   height: 92vh;
+  width: 100%;
 }
 
 .stats-container .stats-graph {
@@ -268,5 +271,14 @@ to {
   .container {
     display: grid;
     grid-template-columns: 1fr; 
+    width: 100vw;
+  }
+
+  .container .questions {
+    width: 100%;
+  }
+
+ .container .stats-container {
+    width: 100vw;  
   }
 }
