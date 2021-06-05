@@ -1,7 +1,13 @@
 body {
   margin: 0;
   padding: 0;
+  width: 100%;
   background-color:burlywood;
+}
+
+.notice-msg {
+  color: red;
+  font-weight: 900;
 }
 
 .header {
@@ -10,7 +16,10 @@ body {
   justify-content: space-between;
   text-align: center;
   height: 8vh;
-  background-color: blanchedalmond;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #1f2933;
   color: burlywood;
   overflow-y: scroll;
   overscroll-behavior-y: contain;
@@ -64,7 +73,7 @@ body {
 
 .container .questions .question {
   font-size: 1.8em;
-  margin: 1em auto;
+  margin: 2em auto;
 }
 
 .container .answers .answer {
@@ -104,6 +113,7 @@ body {
   border-radius: 0.4em;
   margin: 1em 1em 0;
   padding: 0.5em;
+  background-color: #1f2933;
   /* box-shadow: rgb(214, 194, 167) 3px 3px 6px 0px inset, rgb(214, 194, 167)  -3px -3px 6px 1px inset; */
 }
 
@@ -250,4 +260,13 @@ from {
 to {
   transform: rotate(359deg);
 }
+}
+
+
+@media only screen and (max-width: 868px) {
+  /* For mobile phones: */
+  .container {
+    display: grid;
+    grid-template-columns: 1fr; 
+  }
 }
