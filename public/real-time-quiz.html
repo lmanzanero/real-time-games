@@ -5,260 +5,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Real Time Quiz</title>
+  <link rel="stylesheet" href="css/real-time-quiz.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js"></script>
-</head>
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    background-color:burlywood;
-  }
-
-  .header {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-between;
-    text-align: center;
-    height: 8vh;
-    background-color: blanchedalmond;
-    color: burlywood;
-    overflow-y: scroll;
-    overscroll-behavior-y: contain;
-    scroll-snap-type: y proximity;
-  }
-
-  .header .user-score {
-    padding: 0.3em;
-    margin: auto 1em;
-    min-width: 80px;
-    height: 20px;
-    border: 1px solid burlywood;
-    border-radius: 0.4em;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  }
-
-  .active-user {
-    background-color: #1f2933;
-    color: blanchedalmond;
-    padding: 1em;
-    margin: 1em;
-  }
-
-  .container {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    height: 92vh;
-    align-items: center;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-    font-family: monospace;
-  }
-
-  .container .questions .current-score {
-    padding: 1em;
-    margin: 1em auto;
-    font-size: 3em;
-    background-color: bisque;
-    border: 3px solid burlywood;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-    text-align: center;
-  }
-
-  .container .questions {
-    box-shadow: rgba(99, 99, 99, 0.4) 0px 2px 8px 0px; 
-    background-color: blanchedalmond;
-    border-radius: 0.4em;
-    text-align: center;
-    padding: 1em;
-    margin: 1em;
-  }
-
-  .container .questions .question {
-    font-size: 1.8em;
-    margin: 1em auto;
-  }
-
-  .container .answers .answer {
-    display: grid;
-    place-items: center;
-    height: 50px;
-    margin: 0.7em auto;
-    color: sandybrown;
-    border: 1px solid sandybrown;
-    border-radius: 0.4em;
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
-  }
-
-  .container .answers .answer:active { 
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.6) 0px 8px 16px -8px;
-  }
-
-  .container .answers .answer.wrong {
-    background-color:tomato;
-    border: 1px solid black;
-  }
-
-  .stats-container {
-    display: grid;
-    grid-template-rows: 2fr 1fr;
-    grid-row-gap: 1em; 
-    height: 92vh;
-  }
-
-  .stats-container .stats-graph {
-    border-radius: 0.4em;
-    margin: 1em 1em 0;
-    padding: 0.5em;
-    /* box-shadow: rgb(214, 194, 167) 3px 3px 6px 0px inset, rgb(214, 194, 167)  -3px -3px 6px 1px inset; */
-  }
-
-  .stats-container .stats {
-    background-color: #1f2933;
-    color: antiquewhite;
-    box-shadow: rgb(49, 56, 56) 3px 3px 6px 0px inset, rgba(51, 48, 48, 0.5) -3px -3px 6px 1px inset;
-    padding: 1em; 
-    margin: 1em; 
-    border-radius: 0.4em;
-    overflow: scroll;
-  }
-
-  .stats-container .stats .user-action {
-    letter-spacing: 0.3em;  
-    line-height: 2em;
-  }
-
-  .stats-container .stats .user-action span {
-    color: palegreen;
-    font-weight: bolder;
-    letter-spacing: normal;
-  }
-</style> 
-<style>
-  .mic-checkbox {
-  display: none;
-}
-
-.mic-checkbox:checked + .mic-button {
-  transform: rotateY(180deg);
-}
-
-.mic-checkbox:checked + .mic-button span{
- /* display: none;*/
-}
-
-.button-container {
-  position: relative;  
-  height: 0;
-  -moz-perspective: 500px;
-  -webkit-perspective: 500px;
-}
-
-.mic-button {
-  position: absolute;
-  left: 80%;
-  top: -50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 60px;
-  width: 60px;
-  border-radius: 100%;
-  transition: transform 0.4s;
-  border: 2px solid darkcyan;
-  transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
-  -moz-transform-style: preserve-3d;
-  position: relative;
-}
-
-.button-message, .mic {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  -moz-backface-visibility: hidden;
-}
-
-.button-message {
-  position: absolute; 
-  color: darkcyan;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: bold;
-  text-align: center; 
-  font-size: 10px;
-  z-index: 2;
-  transform: rotateY(0deg);
-  pointer-events: none; 
-}
-
-.mic-button-loader {
-  position: absolute;
-  height: 60px;
-  width: 60px;
-  background-color: transparent;
-  transform: rotateY(180deg);  
-  left: -30px;
-  top: -18px;
-}
-
-.mic-checkbox:checked + .mic-button > .mic > .mic-button-loader {
-  border-top: 4px solid darkseagreen;
-  border-radius: 100%;
-  animation: borderLoader 1.3s 0.2s ease-in-out infinite;  
-}
-
-.mic {
-  position: relative;
-  top: -10px;
-  border: 10px solid cadetblue;
-  height: 10px;
-  width: 0;
-  border-radius: 10px;
-  transform: rotateY(180deg);
-}
-
-.mic:after, .mic:before, .mic-base {
-  position: absolute;
-}
-
-.mic:after {
-  content: ""; 
-  left: -17px;
-  top: 1px;
-  height: 22px;
-  width: 26px;
-  background-color: transparent;
-  border: 4px solid darkcyan;
-  border-bottom-left-radius: 110px;
-  border-bottom-right-radius: 110px;
-  border-top: 0;
-  
-}
-
-.mic:before {
-  content: "";
-  top: 20px;
-  left: -2px;
-  border-bottom: 18px solid darkcyan;
-  border-left: 2px solid darkcyan;
-  border-right: 2px solid darkcyan;
-}
-
-.mic-base {
-  top: 35px;
-  left: -10px;
-  border-bottom: 5px solid darkcyan;
-  border-left: 10px solid darkcyan;
-  border-right: 10px solid darkcyan;
-}
-
-@keyframes borderLoader {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(359deg);
-  }
-}
-
-</style>
+</head> 
 <body>
   <div class="header">
     <div class="user-score"><span>$0</span></div> 
@@ -267,7 +16,7 @@
     <div class="questions">
       <h4 class="username">username</h4>
       <div class="button-container">
-        <input type="checkbox" id="micButton" class="mic-checkbox">
+        <input type="checkbox" name="microphone" id="micButton" class="mic-checkbox">
         <label for="micButton" class="mic-button">
           <div class='mic'>
             <div class='mic-button-loader'>
@@ -282,13 +31,14 @@
           </div>
         </label>
       </div>
+      <p class="notice-msg">Read Question to answer!</p>
       <div class="current-score">0</div>
       <div class="question">What is this?</div>
       <div class="answers">
-        <div class="answer">Answer 1</div>
-        <div class="answer">Answer 1</div>
-        <div class="answer">Answer 1</div>
-        <div class="answer">Answer 1</div>  
+        <button class="answer">Answer 1</button>
+        <button class="answer">Answer 1</button>
+        <button class="answer">Answer 1</button>
+        <button class="answer">Answer 1</button>  
       </div>
       <p>These users are playing:</p> 
       <br/>
@@ -304,7 +54,7 @@
     </div>
   </div>
   <script src="/socket.io/socket.io.js"></script>
-  <script>
+  <script type="module">
       const questions = [
   {
     question: 'What is 2 + 2?',
@@ -343,9 +93,31 @@
     ]
   }
 ]
+    import { isAnswerSaidCorrectly } from '/public/js/real-time-quiz/utils.js';
     const question = document.querySelector('.questions .question');
     const currentUser = document.querySelector('.username')
     const userList = document.getElementById('users');
+    let isDisabled = true;
+    let speech = '';
+    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.interimResults = true; 
+    recognition.addEventListener('result', (e) => {
+    const transcript = Array.from(e.results)
+      .map(result => result[0])
+      .map(result => result.transcript)
+      .join(''); 
+      speech = transcript;  
+      if(isAnswerSaidCorrectly(question.innerHTML, speech)) {
+        question.style.color = 'green';
+        isDisabled = false;
+        microPhone.checked = false;
+        answers.forEach(answer => {
+          answer.disabled = isDisabled;
+        })
+      }  
+    });
+
     const socket = io();
     let allUsers = [];
     const userData = [];
@@ -354,37 +126,56 @@
     let ctx = document.getElementById('myChart').getContext('2d');
     const answers = document.querySelectorAll('.answers .answer');
     const currentScore = document.querySelector('.container .current-score')
-    const microPhone = document.querySelector('.button-container')
+    const microPhone = document.querySelector('.button-container input[name=microphone]')
     let username = '';
     let room = '';
     let score = 0; 
-    answers.forEach(answer => answer.addEventListener('click', validateAnswer))
-    function shuffleQuestion() { 
+
+    microPhone.addEventListener('change', (e) => { 
+      // e.preventDefault(); 
+      console.log(e);
+      if(e.target.checked) {
+        //listen for speech
+        recognition.start();  
+      } else {
+        recognition.stop();
+      }
+    });
+    answers.forEach(answer => answer.addEventListener('click', validateAnswer));
+
+    function shuffleQuestion() {  
+      recognition.stop(); 
+      microPhone.checked = false;
+      question.style.color = 'black';
+      speech = '';
+      isDisabled = true;
       const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
-      question.innerHTML = randomQuestion.question;
-      answers.forEach((answer, index) => {
+      question.innerHTML = randomQuestion.question; 
+      answers.forEach((answer, index) => { 
+        answer.disabled = isDisabled; 
         answer.classList.remove('wrong');
         answer.innerHTML = randomQuestion.answers[index]?.text;
-        answer.setAttribute('is-correct',randomQuestion.answers[index]?.correct)
+        answer.setAttribute('is-correct',randomQuestion.answers[index]?.correct); 
+        console.log(isDisabled, answer);
       })
     }
 
-   function validateAnswer(answer) { 
+   function validateAnswer(answer) {  
      //todo: make this better
       if(answer.target.getAttribute('is-correct') === 'true'){  
         score  = score + 5;  
         currentScore.innerHTML = `$${score}`;
-        // Emit message to server
-        socket.emit('userScore', score);  
         allScores.push(score);
         shuffleQuestion();
+        // Emit message to server
+        socket.emit('userScore', score);  
       } else {
         answer.target.classList.add('wrong');
         score  = score - 3;  
         currentScore.innerHTML = `$${score}`;
+        allScores.push(score); 
         // Emit message to server
         socket.emit('userScore', score);  
-        allScores.push(score); 
       }
 
       //show user scores to dom
@@ -396,11 +187,11 @@
     }
 
     shuffleQuestion();
-    username = prompt('Enter Username: ');
-    currentUser.innerHTML = username;
-    room = prompt('Enter Room Id: ');
-    // Join chatroom
-    socket.emit('joinRoom', { username, room, score });
+    // username = prompt('Enter Username: ');
+    // currentUser.innerHTML = username;
+    // room = prompt('Enter Room Id: ');
+    // Join gameroom
+    // socket.emit('joinRoom', { username, room, score });
 
     // Get room and users
     socket.on('roomUsers', ({ room, users }) => {
@@ -424,7 +215,7 @@
     socket.on('message', message => {    
       const stats = document.querySelector('.stats');
       const latestStat = `
-          <div class="user-action">${message.username} <span> ${message.text} at ${message.time}</span></div>
+          <div class="user-action">${message.username} <span> current score is ${message.text} at ${message.time}</span></div>
       `;
       console.log(latestStat);
       stats.insertAdjacentHTML("beforeend", latestStat);
@@ -448,7 +239,7 @@
         //   let userStat = `<p>${key} value: $${userData[0][key]}</p>`;
         //   statsGraph.insertAdjacentHTML("beforeend", userStat);
         // });
-         
+        //todo: sort userData to ensure values show from highest to lowest in chart
         // make score and users array from user data
         const userNames = userData.map(user => Object.keys(user)); 
         const userValues = userData.map(user => Object.values(user)); 
@@ -472,22 +263,6 @@
         myChart.update();  
       }   
     }); 
-
-    // microPhone.addEventListener('click', (e) => {
-    //   console.log(e);
-    //   window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    //   const recognition = new SpeechRecognition();
-    //   recognition.interimResults = true; 
-
-    //   recognition.addEventListener('result', (e) => {
-    //     const transcript = Array.from(e.results)
-    //     .map(result => result[0])
-    //     .map(result => result.transcript)
-    //     .join(''); 
-    //     msg.value = transcript; 
-    //     console.log(transcript);
-    //   });
-    // });
 
     </script>
     <script>
